@@ -52,8 +52,8 @@ pub mod tokens {
             match self {
                 Type::HeaderH1 => write!(f, "H1"),
                 Type::HeaderH2 => write!(f, "H2"),
-                Type::Unknown => write!(f, "UNKNOWN"),
-                Type::Paragraph => write!(f, "PARAGRAPH"),
+                Type::Unknown => write!(f, "Unknown"),
+                Type::Paragraph => write!(f, "Paragraph"),
                 Type::NewLine => write!(f, "NewLine")
             }
         }
