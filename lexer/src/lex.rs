@@ -63,7 +63,7 @@ pub mod tokens {
 #[cfg(test)]
 mod tests {
     use crate::lex;
-    use crate::lex::common::Token;
+    use crate::lex::common::{Token, TokenMatcher};
     use crate::lex::lexer_factory;
 
     #[test]
@@ -89,11 +89,16 @@ mod tests {
     }
 
     #[test]
-    fn test_detect_multiline_paragraph() {
+    fn test_should_return_multi_paragraph_with_line_break_token() {
         let matchers = lexer_factory::LexerFactory::get_lexers();
-        let lines: [String; 2] = [String::from("Hello \n"), String::from("World \n")];
+        let lines: Vec<String> = vec![String::from("There is a theory which states that if ever anyone discovers exactly what the Universe is for and why it is here, it will instantly disappear and be replaced by something even more bizarre and inexplicable.  \n"),
+            String::from(" \n"),
+            String::from("There is another theory which states that this has already happened.  \n")];
         let mut tokens: Vec<Token> = vec![];
+        parse_lines(matchers, lines, &mut tokens);
+    }
 
+    fn parse_lines(matchers: Vec<Box<dyn TokenMatcher>>, lines: Vec<String>, tokens: &mut Vec<Token>) {
         for line in lines.iter() {
             for matcher in matchers.iter() {
                 let passed = matcher.validate(&String::from(line));
@@ -103,6 +108,14 @@ mod tests {
                 }
             }
         }
+    }
+
+    #[test]
+    fn test_detect_multiline_paragraph() {
+        let matchers = lexer_factory::LexerFactory::get_lexers();
+        let lines: Vec<String> = vec![String::from("Hello \n"), String::from("World \n")];
+        let mut tokens: Vec<Token> = vec![];
+        parse_lines(matchers, lines, &mut tokens);
         assert_eq!(tokens.len(), 2);
         assert_eq!(tokens.get(0).unwrap().token_type.to_string(), lex::common::Type::Paragraph.to_string());
         assert_eq!(tokens.get(1).unwrap().token_type.to_string(), lex::common::Type::Paragraph.to_string());
