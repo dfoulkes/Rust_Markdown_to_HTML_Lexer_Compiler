@@ -1,7 +1,6 @@
 //use crate::lexer::headers;
 
 fn main() {
-    use lexer;
     //headers::parse(String::from("# Hello World"));
     println!("Hello, world!");
     // for each line in a file, parse the line
