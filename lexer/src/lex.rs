@@ -1,33 +1,41 @@
-
 pub mod lexer_factory {
     use crate::lex::common::TokenMatcher;
+    use crate::markdown::body::BodyMatcher;
     use crate::markdown::headers::HeaderMatcher;
 
     pub struct LexerFactory;
+
     impl LexerFactory {
-        pub fn get_lexers() -> Vec<Box<dyn TokenMatcher>>  {
-           // const TOKEN_MATCHER: dyn TokenMatcher = HeaderMatcher;
-            let lexers: Vec<Box<dyn TokenMatcher>> = vec![Box::new(HeaderMatcher)];
+        pub fn get_lexers() -> Vec<Box<dyn TokenMatcher>> {
+            // const TOKEN_MATCHER: dyn TokenMatcher = HeaderMatcher;
+            let lexers: Vec<Box<dyn TokenMatcher>> = vec![Box::new(HeaderMatcher),
+                                                          Box::new(BodyMatcher),
+            ];
             return lexers;
         }
     }
 }
 
 pub mod common {
-
-
-pub enum Type {
-        HeaderH1, HeaderH2, UNKNOWN, PARAGRAPH
+    pub enum Type {
+        HeaderH1,
+        HeaderH2,
+        Unknown,
+        Paragraph,
+        NewLine,
     }
+
     pub struct Token {
         pub token_type: Type,
-        pub token_value: String
+        pub token_value: String,
     }
+
     pub trait TokenMatcher {
-        fn validate(&self, line:&String) -> bool;
-        fn get_token(&self, line:&String) -> Token;
+        fn validate(&self, line: &String) -> bool;
+        fn get_token(&self, line: &String) -> Token;
     }
 }
+
 pub mod tokens {
     use std::fmt;
     use crate::lex::common::Token;
@@ -38,17 +46,20 @@ pub mod tokens {
             write!(f, "{}", self.token_value)
         }
     }
+
     impl fmt::Display for Type {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
             match self {
                 Type::HeaderH1 => write!(f, "H1"),
                 Type::HeaderH2 => write!(f, "H2"),
-                Type::UNKNOWN => write!(f, "UNKNOWN"),
-                Type::PARAGRAPH => write!(f, "PARAGRAPH")
+                Type::Unknown => write!(f, "UNKNOWN"),
+                Type::Paragraph => write!(f, "PARAGRAPH"),
+                Type::NewLine => write!(f, "NewLine")
             }
         }
     }
 }
+
 #[cfg(test)]
 mod tests {
     use crate::lex;
@@ -58,7 +69,7 @@ mod tests {
     #[test]
     fn test_that_lexer_factory_returns_a_list_of_token_matchers() {
         let matchers = lexer_factory::LexerFactory::get_lexers();
-        assert_eq!(matchers.len(), 1);
+        assert_eq!(matchers.len(), 2);
     }
 
     #[test]
@@ -78,15 +89,14 @@ mod tests {
     }
 
     #[test]
-    fn test_detect_multiline_paragraph(){
+    fn test_detect_multiline_paragraph() {
         let matchers = lexer_factory::LexerFactory::get_lexers();
-        let mut passed = false;
-        let lines :[&str;2] = ["Hello \n","World \n"];
+        let lines: [String; 2] = [String::from("Hello \n"), String::from("World \n")];
         let mut tokens: Vec<Token> = vec![];
 
         for line in lines.iter() {
             for matcher in matchers.iter() {
-                passed = matcher.validate(&String::from(line));
+                let passed = matcher.validate(&String::from(line));
                 if passed {
                     let token = matcher.get_token(&String::from(line));
                     tokens.push(token);
@@ -94,8 +104,7 @@ mod tests {
             }
         }
         assert_eq!(tokens.len(), 2);
-        assert_eq!(tokens.get(0).unwrap().token_type.to_string(), lex::common::Type::PARAGRAPH.to_string());
-        assert_eq!(tokens.get(1).unwrap().token_type.to_string(), lex::common::Type::PARAGRAPH.to_string());
+        assert_eq!(tokens.get(0).unwrap().token_type.to_string(), lex::common::Type::Paragraph.to_string());
+        assert_eq!(tokens.get(1).unwrap().token_type.to_string(), lex::common::Type::Paragraph.to_string());
     }
-    
 }
