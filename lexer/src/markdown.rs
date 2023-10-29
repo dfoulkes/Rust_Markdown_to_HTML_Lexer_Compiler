@@ -1,5 +1,5 @@
 pub mod headers {
-    use crate::lex::common::{Token, Type, TokenMatcher};
+    use crate::lex::tokens::{Token, Type, TokenMatcher};
 
     pub struct HeaderMatcher;
 
@@ -47,7 +47,7 @@ pub mod headers {
 }
 
 pub mod body {
-    use crate::lex::common::{Token, TokenMatcher, Type};
+    use crate::lex::tokens::{Token, TokenMatcher, Type};
 
     pub struct BodyMatcher;
 
@@ -88,7 +88,7 @@ pub mod body {
 // 6. Should return UNKNOWN when there's only a line ending
 #[cfg(test)]
 mod tests {
-    use crate::lex::common::{Type, TokenMatcher};
+    use crate::lex::tokens::{Type, TokenMatcher};
     use crate::markdown::body::BodyMatcher;
     use crate::markdown::headers::HeaderMatcher;
 

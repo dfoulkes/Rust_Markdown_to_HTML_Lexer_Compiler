@@ -1,4 +1,4 @@
-mod markdown;
-mod lex;
+pub mod markdown;
+pub mod lex;
 
 
