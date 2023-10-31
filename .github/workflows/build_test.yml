@@ -22,17 +22,9 @@ jobs:
     - name: Run tests
       run: cargo test --verbose
     - name: Generate code coverage
-      uses: taiki-e/cargo-llvm-cov@v1
-      with:
-        # The format of the output. One of "html", "lcov", "json", or "text".
-        # Defaults to "html".
-        output-format: lcov
-
-        # The name of the output file. Defaults to "coverage.lcov".
-        output-filename: lcov.info
-
-        # The directory where the output file will be saved. Defaults to "./coverage".
-        output-directory: ./coverage
+      uses: taiki-e/install-action@cargo-llvm-cov
+    - name: Generate code coverage
+      run: cargo llvm-cov --all-features --workspace --lcov --output-path ./coverage/lcov.info
     - name: coverage
       uses: coverallsapp/github-action@v2
       with:
