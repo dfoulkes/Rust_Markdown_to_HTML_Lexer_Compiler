@@ -25,3 +25,7 @@ The project is broken up into 3 main crates:
 - Learn how to use the Rust compiler.
 - Learn TDD in Rust.
 - Learn how to use the Rust standard library.
+
+
+# Pipeline Status
+[![Build & Test](https://github.com/dfoulkes/Rust_Markdown_to_HTML_Lexer_Compiler/actions/workflows/build_test.yml/badge.svg)](https://github.com/dfoulkes/Rust_Markdown_to_HTML_Lexer_Compiler/actions/workflows/build_test.yml)
