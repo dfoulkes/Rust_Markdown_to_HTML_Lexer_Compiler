@@ -26,8 +26,9 @@ jobs:
         cargo install cargo-tarpaulin
     - name: run test coverage
       run: |
-        cargo tarpaulin --workspace
+        cargo tarpaulin --workspace --out Xml
     - name: coverage
       uses: coverallsapp/github-action@v2
       with:
             github-token: ${{ secrets.GITHUB_TOKEN }}
+            path-to-lcov: "./target/debug/coverage/lcov.info"
