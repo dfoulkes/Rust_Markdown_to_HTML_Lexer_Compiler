@@ -37,30 +37,8 @@ pub mod lexer_factory {
     }
 }
 
-pub mod common {
-    // pub enum Type {
-    //     HeaderH1,
-    //     HeaderH2,
-    //     Unknown,
-    //     Paragraph,
-    //     NewLine,
-    // }
-    //
-    // pub struct Token {
-    //     pub token_type: Type,
-    //     pub token_value: String,
-    // }
-    //
-    // pub trait TokenMatcher {
-    //     fn validate(&self, line: &String) -> bool;
-    //     fn get_token(&self, line: &String) -> Token;
-    // }
-}
-
 pub mod tokens {
     use std::fmt;
-    // use crate::lex::common::Token;
-    // use crate::lex::common::Type;
 
     impl fmt::Display for Token {
         fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {

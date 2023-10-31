@@ -4,3 +4,10 @@ members = [
     "runner",
     "lexer"
 ]
+
+## based on the recommendations found here  https://github.com/johnthagen/min-sized-rust
+# These shred a third off the binary size
+[profile.release]
+strip = true
+lto = true # LTO instructs the linker to optimize at the link stage
+opt-level = "z"  # Optimize for size.
