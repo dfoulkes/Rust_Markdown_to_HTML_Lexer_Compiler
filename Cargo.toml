@@ -11,3 +11,4 @@ members = [
 strip = true
 lto = true # LTO instructs the linker to optimize at the link stage
 opt-level = "z"  # Optimize for size.
+

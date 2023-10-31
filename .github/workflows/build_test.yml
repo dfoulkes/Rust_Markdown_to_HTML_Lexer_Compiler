@@ -21,14 +21,20 @@ jobs:
       run: cargo build --verbose
     - name: Run tests
       run: cargo test --verbose
-    - name: add rust coverage tooling
-      run: |
-        cargo install cargo-tarpaulin
-    - name: run test coverage
-      run: |
-        cargo tarpaulin --workspace --out Xml
+    - name: Generate code coverage
+      uses: taiki-e/cargo-llvm-cov@v1
+      with:
+        # The format of the output. One of "html", "lcov", "json", or "text".
+        # Defaults to "html".
+        output-format: lcov
+
+        # The name of the output file. Defaults to "coverage.lcov".
+        output-filename: lcov.info
+
+        # The directory where the output file will be saved. Defaults to "./coverage".
+        output-directory: ./coverage
     - name: coverage
       uses: coverallsapp/github-action@v2
       with:
             github-token: ${{ secrets.GITHUB_TOKEN }}
-            path-to-lcov: "./target/debug/coverage/lcov.info"
+            path-to-lcov: "./coverage"
