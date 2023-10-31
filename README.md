@@ -1,3 +1,4 @@
+[![Coverage Status](https://coveralls.io/repos/github/dfoulkes/Rust_Markdown_to_HTML_Lexer_Compiler/badge.svg)](https://coveralls.io/github/dfoulkes/Rust_Markdown_to_HTML_Lexer_Compiler)
 # Rust - Markdown to HTML Converter
 
 ---
