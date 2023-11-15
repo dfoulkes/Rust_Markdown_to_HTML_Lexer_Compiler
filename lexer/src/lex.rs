@@ -9,8 +9,10 @@ pub mod markdown_lexer {
             for matcher in matchers.iter() {
                 //print!("Using matcher against line {}:", line);
                 if matcher.validate(&line.to_string()) {
-                    let token = matcher.get_token(&line.to_string());
-                    tokens.push(token);
+                    let parsed_tokens = matcher.get_token(&line.to_string());
+                    for t in parsed_tokens.iter() {
+                        tokens.push(t.clone());
+                    }
                     break;
                 }
             }
@@ -46,22 +48,30 @@ pub mod tokens {
         }
     }
 
-    pub enum Type {
+    #[derive(Clone)]
+pub enum Type {
         HeaderH1,
         HeaderH2,
         Unknown,
         Paragraph,
         NewLine,
+        CodeBlockOpen,
+        CodeBlockClose,
     }
 
+    #[derive(Clone)]
     pub struct Token {
         pub token_type: Type,
         pub token_value: String,
     }
 
+    pub trait Clone {
+        fn clone(&self) -> Self;
+    }
+
     pub trait TokenMatcher {
         fn validate(&self, line: &String) -> bool;
-        fn get_token(&self, line: &String) -> Token;
+        fn get_token(&self, line: &String) -> Vec<Token>;
     }
 
     impl fmt::Display for Type {
@@ -71,7 +81,9 @@ pub mod tokens {
                 Type::HeaderH2 => write!(f, "H2"),
                 Type::Unknown => write!(f, "Unknown"),
                 Type::Paragraph => write!(f, "Paragraph"),
-                Type::NewLine => write!(f, "NewLine")
+                Type::NewLine => write!(f, "NewLine"),
+                Type::CodeBlockOpen => write!(f, "CodeBlockOpen"),
+                Type::CodeBlockClose => write!(f, "CodeBlockClose")
             }
         }
     }
@@ -98,7 +110,7 @@ mod tests {
             passed = matcher.validate(&String::from(markdown_text));
             if passed {
                 let token = matcher.get_token(&String::from(markdown_text));
-                assert_eq!(token.token_type.to_string(), lex::tokens::Type::HeaderH1.to_string());
+                assert_eq!(token[0].token_type.to_string(), lex::tokens::Type::HeaderH1.to_string());
                 break;
             }
         }
@@ -121,7 +133,8 @@ mod tests {
                 let passed = matcher.validate(&String::from(line));
                 if passed {
                     let token = matcher.get_token(&String::from(line));
-                    tokens.push(token);
+                    let t = token[0].clone();
+                    tokens.push(t);
                 }
             }
         }
