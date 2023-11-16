@@ -53,7 +53,7 @@ pub enum Type {
         HeaderH1,
         HeaderH2,
         Unknown,
-        Paragraph,
+        Word,
         NewLine,
         CodeBlockOpen,
         CodeBlockClose,
@@ -80,7 +80,7 @@ pub enum Type {
                 Type::HeaderH1 => write!(f, "H1"),
                 Type::HeaderH2 => write!(f, "H2"),
                 Type::Unknown => write!(f, "Unknown"),
-                Type::Paragraph => write!(f, "Paragraph"),
+                Type::Word => write!(f, "Paragraph"),
                 Type::NewLine => write!(f, "NewLine"),
                 Type::CodeBlockOpen => write!(f, "CodeBlockOpen"),
                 Type::CodeBlockClose => write!(f, "CodeBlockClose")
@@ -147,8 +147,8 @@ mod tests {
         let mut tokens: Vec<Token> = vec![];
         parse_lines(matchers, lines, &mut tokens);
         assert_eq!(tokens.len(), 2);
-        assert_eq!(tokens.get(0).unwrap().token_type.to_string(), lex::tokens::Type::Paragraph.to_string());
-        assert_eq!(tokens.get(1).unwrap().token_type.to_string(), lex::tokens::Type::Paragraph.to_string());
+        assert_eq!(tokens.get(0).unwrap().token_type.to_string(), lex::tokens::Type::Word.to_string());
+        assert_eq!(tokens.get(1).unwrap().token_type.to_string(), lex::tokens::Type::Word.to_string());
     }
 
     #[test]
@@ -183,10 +183,10 @@ The project is broken up into 3 main crates:
         let tokens = lex::markdown_lexer::parse(contents);
         assert_eq!(tokens.len(), 26);
         assert_eq!(tokens.get(0).unwrap().token_type.to_string(), lex::tokens::Type::HeaderH1.to_string());
-        assert_eq!(tokens.get(1).unwrap().token_type.to_string(), lex::tokens::Type::Paragraph.to_string());
+        assert_eq!(tokens.get(1).unwrap().token_type.to_string(), lex::tokens::Type::Word.to_string());
         assert_eq!(tokens.get(2).unwrap().token_type.to_string(), lex::tokens::Type::NewLine.to_string());
         assert_eq!(tokens.get(3).unwrap().token_type.to_string(), lex::tokens::Type::HeaderH2.to_string());
         assert_eq!(tokens.get(4).unwrap().token_type.to_string(), lex::tokens::Type::NewLine.to_string());
-        assert_eq!(tokens.get(5).unwrap().token_type.to_string(), lex::tokens::Type::Paragraph.to_string());
+        assert_eq!(tokens.get(5).unwrap().token_type.to_string(), lex::tokens::Type::Word.to_string());
     }
 }

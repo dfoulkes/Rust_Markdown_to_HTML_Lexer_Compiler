@@ -68,25 +68,70 @@ pub mod body {
             } else {
                 let tokenise_string_by_space = line.split_whitespace();
                 for word in tokenise_string_by_space {
-                    if word.eq("<code>") {
-                        tokens.push(
-                            Token {
-                                token_type: Type::CodeBlockOpen,
-                                token_value: format!("{}", line),
-                            });
-                    } else if (word.eq("</code>")) {
+                    if !Self::is_code_block(&mut tokens, word) {
                         tokens.push(Token {
-                            token_type: Type::CodeBlockClose,
-                            token_value: format!("{}", line),
+                            token_type: Type::Word,
+                            token_value: format!("{}", word),
                         });
                     }
                 }
-                tokens.push(Token {
-                    token_type: Type::Paragraph,
-                    token_value: format!("{}", line),
-                });
             };
             return tokens;
+        }
+    }
+
+    impl BodyMatcher {
+        fn is_code_block(tokens: &mut Vec<Token>, word: &str) -> bool {
+            let mut found = false;
+            if word.contains("<code>") {
+                found = true;
+                // find the postion of the word in the line
+                let start = word.find("<code>");
+                let code_block_tag_end = start.unwrap() + 6;
+                let code_block = &word[start.unwrap()..code_block_tag_end];
+                tokens.push(
+                    Token {
+                        token_type: Type::CodeBlockOpen,
+                        token_value: format!("{}", code_block),
+                    });
+                if word.len() > code_block_tag_end {
+                    let rest_of_line = &word[code_block_tag_end..];
+                    tokens.push(Token {
+                        token_type: Type::Word,
+                        token_value: format!("{}", rest_of_line),
+                    });
+                }
+            } else if word.contains("</code>") {
+                found = true;
+                let position_of_end_tag =  word.trim().find("</code>").unwrap();
+                if word.trim().find("</code>").unwrap() == 0 {
+                    let end = word.find("</code>").unwrap();
+                    let code_block = &word[0..end];
+                    tokens.push(Token {
+                        token_type: Type::Word,
+                        token_value: format!("{}", code_block),
+                    });
+                } else {
+                    if word.trim().len() > 7 {
+                        let line_upto_token = &word[0..position_of_end_tag];
+                        tokens.push(Token {
+                            token_type: Type::Word,
+                            token_value: format!("{}", line_upto_token),
+                        });
+                        tokens.push(Token {
+                            token_type: Type::CodeBlockClose,
+                            token_value: format!("{}", "</code>"),
+                        });
+                    }
+                    else {
+                        tokens.push(Token {
+                            token_type: Type::CodeBlockClose,
+                            token_value: format!("{}", "</code>"),
+                        });
+                    }
+                }
+            }
+            return found;
         }
     }
 
@@ -176,8 +221,9 @@ mod tests {
         let test: String = String::from("Hello World");
         let body_matcher = BodyMatcher;
         let result = body_matcher.get_token(&test);
-        assert_eq!(result[0].token_type.to_string(), Type::Paragraph.to_string());
-        assert_eq!(result[0].token_value, test);
+        assert_eq!(result[0].token_type.to_string(), Type::Word.to_string());
+        assert_eq!(result[0].token_value, "Hello");
+        assert_eq!(result[1].token_value, "World");
     }
 
     #[test]
@@ -194,7 +240,8 @@ mod tests {
         let body_matcher = BodyMatcher;
         let result = body_matcher.get_token(&test);
         assert_eq!(result[0].token_type.to_string(), Type::CodeBlockOpen.to_string());
-        assert_eq!(result[1].token_type.to_string(), Type::Paragraph.to_string());
-        assert_eq!(result[1].token_type.to_string(), Type::CodeBlockClose.to_string());
+        assert_eq!(result[1].token_type.to_string(), Type::Word.to_string());
+        assert_eq!(result[2].token_type.to_string(), Type::Word.to_string());
+        assert_eq!(result[3].token_type.to_string(), Type::CodeBlockClose.to_string());
     }
 }
